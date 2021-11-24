@@ -1,7 +1,6 @@
 model/Data_Publish/
 
 model/Scripts/.ipynb_checkpoints/
-model/Scripts/*.csv
 
 **/.idea/
 **/npm-debug.log
