@@ -236,7 +236,7 @@ async function processData() {
 function runPyModel(filepath) {
     // return a Promise for running the python code
     return new Promise((resolve, reject) => {
-        const pyScript = spawn('python', ['../MWDET_Project/Scripts/MW_prediction_webgazer.py', filepath]);
+        const pyScript = spawn('python', ['c:/Users/kmfre/projects/mobileX/model/Scripts/MW_prediction_webgazer.py', filepath]);
         // handle output
         pyScript.stdout.on('data', data => { resolve(data.toString()); })
         pyScript.stderr.on('data', data => { reject(data.toString()) });
@@ -334,10 +334,10 @@ app.post('/video/:type', function (req, res) {
             logger.info("Received video gazer data batch of length: " + req.body.data.length);
             // await data from model prediction, then send back to activity.js
             processData().then(
-                runPyModel(csvPath).then((prediction) => {
-                    console.log('Prediction returned:', prediction);
-                    mw_prediction = prediction;
-                    res.end(prediction, 'utf-8');
+                runPyModel(csvPath).then((pred) => {
+                    console.log('Prediction returned:', pred);
+                    mw_prediction = pred;
+                    res.end(pred, 'utf-8');
                 }).catch((err) => { console.info('Python failed:', err); }))
                 .catch((_) => console.error('Processing data failed'));
             break;
@@ -347,6 +347,25 @@ app.post('/video/:type', function (req, res) {
             res.end();
             break;
     }
+});
+
+/**
+ * Handles the log of period:predictions from activity.js.
+ * Writes the data object to a file.
+ */
+app.post('/video/done', function(req, res){
+    if (user === undefined) res.end();
+    // Write the object to a data file
+    predfile = dataPath + 'predictions' + user.id + '.json'
+    fs.writeFile(predfile, Buffer.from(JSON.stringify(req.body.data)), function (err) {
+        if (err) {
+            logger.error("Error writing file " + filename + "\n" + err);
+        }
+    });
+    // Write the bells to a data file
+    ratingfile = dataPath + 'ratings' + user.id + '.json'
+    fs.writeFile(ratingfile, Buffer.from(JSON.stringify(user.ratings)));
+    res.end();
 });
 
 /**

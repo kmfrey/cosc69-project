@@ -10,8 +10,9 @@ var rating = (function() {
 
     //region settings
     //---------------------------------------------------------------------------------------
-    var rating_min_time = 30000; // lower-bound of rating enable time
-    var rating_max_time = 60000; // upper-bound of rating enable time
+    var rating_period = 40000; // 2*sampling period (20 seconds)
+    var rating_min_time = 20000; // lower-bound of rating enable time
+    var rating_max_time = rating_period - 1000; // upper-bound of rating enable time, the period minus 1 second
     var rating_time     = 10000; // the time user gets to rate
 
     var tutorialMode = false;
@@ -24,6 +25,7 @@ var rating = (function() {
     var rating_reminder = false;
 
     // timeout function for the rating box
+    var ratingInterval;
     var ratingTimeout;
     //---------------------------------------------------------------------------------------
     //endregion
@@ -36,9 +38,6 @@ var rating = (function() {
     function init() {
         // move ratingbox to appropriate location on page
         ratingbox.css('right', "30px");
-        // if we want the rating box to snap to the right edge of the player, use something like:
-        // .css('right', $('iframe').position().left);
-
 
         $(document).keydown(function(e) {
             if (e.which === 49) {
@@ -58,25 +57,29 @@ var rating = (function() {
         // After set rating time, disable rating
 
         if (!tutorialMode) {
-            waitAndExecute(getRandTime(), function() {
-                rating_enabled = true;
-                var audio = new Audio('other/alert.mp3');
-                audio.play();
-
-                // add focus back to document to rate
-                window.focus();
-                disableRating();
-
-                //send bell data to server
-                var data = {
-                    "time": (new Date()).toISOString(),
-                    "videoTime": activity.getMonitorStart() - new Date().valueOf(),
-                    "videoDuration": 10000,
-                    "stage": activity.getStageCount()
-                };   
-
-                $.post('/rating/bell', data);         
-            });
+            // Every 40 seconds, get a new timeout between 20 and 39 seconds
+            ratingInterval = setInterval(function() {
+                waitAndExecute(getRandTime(), function() {
+                    rating_enabled = true;
+                    var audio = new Audio('other/alert.mp3');
+                    audio.play();
+    
+                    // add focus back to document to rate
+                    window.focus();
+                    disableRating();
+    
+                    //send bell data to server
+                    var data = {
+                        "time": (new Date()).toISOString(),
+                        "videoTime": new Date().valueOf() - activity.getMonitorStart(),
+                        "videoDuration": 20000,
+                        "stage": activity.getStageCount(),
+                        "sample": activity.getSample()
+                    };   
+    
+                    $.post('/rating/bell', data);         
+                });
+            }, rating_period);
         } else {
             waitAndExecute(2000, function() {
                 rating_enabled = true;
@@ -94,7 +97,8 @@ var rating = (function() {
         // After random time between rating_min_time and rating_max_time, enable rating again
         waitAndExecute(rating_time, function() {
             rating_enabled = false;
-            enableRating();
+            // No need to call enableRating because there is now an interval.
+            // enableRating();
         });
     }
 
@@ -168,9 +172,10 @@ var rating = (function() {
         var data = {
             "time": time,
             "rating" : rating,
-            "videoTime": player.getCurrentTime(),
-            "videoDuration": player.getDuration(),
-            "stage": activity.getStageCount()
+            "videoTime": d.valueOf() - activity.getMonitorStart(),
+            "videoDuration": 20000,
+            "stage": activity.getStageCount(),
+            "sample": activity.getSample()
         };
 
         $.post('/rating/rate', data);

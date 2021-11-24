@@ -61,6 +61,7 @@ block content
                 h4="According to the data collected, you may be..."
                 hr
                 .text
+                    p #{prediction}
                     if prediction === '0.0'
                         p Focused! Great job.
                     else if prediction === '1.0'

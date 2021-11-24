@@ -14,6 +14,7 @@ var activity = (function () {
 
     var monitorStart = undefined; // timestamp
     const sampleLength = 20000; // in ms. Needs to be a multiple of collectionInterval
+    var sample = 0; // which number sample, for evaluation.
 
     // tracker data collection
     var collectionInterval = 200; //in ms
@@ -21,6 +22,8 @@ var activity = (function () {
     var trackerData = [];
     var trackerInterval;
     var modelPrediction;
+    // array of data ({sample: x, prediction: y})
+    var predictionLog = [];
 
     var resizeData;
     var resizeCheckInterval;
@@ -94,23 +97,28 @@ var activity = (function () {
             if (!collectionCount)
                 monitorStart = d;
 
+            var recordingTime = d.valueOf() - Number(monitorStart);
+
             var data = {
                 'gazerX': prediction.x,
                 'gazerY': prediction.y,
                 'time': d.toISOString(),
-                "videoTime": (monitorStart === undefined) ? "N/A (calibration)" : d.valueOf() - Number(monitorStart),
+                "videoTime": (monitorStart === undefined) ? "N/A (calibration)" : recordingTime,
                 "videoLength": (monitorStart === undefined) ? "N/A (calibration)" : sampleLength,
-                "stage": stageCount
+                "stage": stageCount,
+                "sample": sample
             }
 
             trackerData.push(data);
             collectionCount++;
 
             // send data if at or over the sample length.
-            if (collectionCount >= sampleLength / collectionInterval) {
+            if (collectionCount >= sampleLength / collectionInterval - 1 || recordingTime >= sampleLength) {
                 sendTrackerData();
                 collectionCount = 0;
-                console.log("Tracker data sent to the server after", sampleLength);
+                console.log("Tracker data sent to the server for sample", sample);
+                // increase the sample number by 1.
+                sample++;
             }
         }, collectionInterval);
     }
@@ -120,6 +128,10 @@ var activity = (function () {
         console.log("Stopping collecting gazer data, sending remaining data");
         sendTrackerData();
         clearInterval(trackerInterval);
+        // send the prediction log to app if mode is EVALUATE
+        if (appMode === "EVALUATE") {
+            $.post('/video/done', { data: predictionLog });
+        }
         monitorStart = undefined;
     }
 
@@ -127,7 +139,13 @@ var activity = (function () {
     function sendTrackerData() {
         $.post(trackerRoute, { data: trackerData }, (data, status) => {
             if (status === "success") {
-                modelPrediction = data
+                modelPrediction = data;
+                // record the prediction for evaluation
+                predictionLog.push({
+                    'sample': sample,
+                    'prediction': modelPrediction
+                });
+                console.log("The model has predicted", modelPrediction);
             }
         });
         trackerData = [];
@@ -241,16 +259,20 @@ var activity = (function () {
         return appMode;
     }
 
-    module.getPrediction = function () {
-        return modelPrediction;
-    }
-
     /**
      * Returns monitorStart, which is either a timestamp or undefined.
      * @returns monitorStart
      */
     module.getMonitorStart = function () {
         return monitorStart;
+    }
+
+    /**
+     * Returns sample, which is an integer greater than or equal to 0.
+     * @returns sample
+     */
+    module.getSample = function () {
+        return sample;
     }
 
     return module;
