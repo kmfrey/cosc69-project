@@ -1,0 +1,15 @@
+model/Data_Publish/
+
+model/Scripts/.ipynb_checkpoints/
+model/Scripts/*.csv
+
+**/.idea/
+**/npm-debug.log
+webapp/logs/*
+webapp/data/*
+webapp/.idea/
+
+.vscode/
+temp-data/*
+MW_webapp/
+MWDET_Project/

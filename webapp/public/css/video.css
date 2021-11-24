@@ -1,0 +1,129 @@
+body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.header {
+    margin-left: 105px;
+    padding-left: 15px;
+}
+
+.container {
+    height: inherit;
+    width: 100%;
+    padding: 0px;
+}
+
+.videoContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*padding-top: 50px;*/
+    /*padding-bottom: 50px;*/
+    background-color: #020202;
+}
+
+.notransition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    -ms-transition: none !important;
+    transition: none !important;
+}
+
+.buttonsContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.outputContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.ratingContainer {
+    display:block;
+    position: absolute;
+    right:0;
+    width:20%;
+    font-size: 12pt;
+    line-height:2;
+}
+
+.textContainer {
+    display:block;
+    position: absolute;
+    left: 30px;
+    width: 20%;
+    padding: 10px;
+    font-size: 12pt;
+    line-height: 2;
+}
+
+.vcontrol {
+  background-color: #191919;
+  color: white !important;
+  border: none !important;
+  outline: 0px !important;
+  height: 30px;
+  margin-left: 3px;
+  margin-right: 3px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+}
+
+.vcontrol:active:hover:focus {
+    background-color: black !important;
+    color: white !important;
+}
+
+.vcontrolOn {
+  color: cyan !important;
+  background-color: #191919;
+  border: none !important;
+  outline: 0px !important;
+  height: 30px;
+  margin-left: 3px;
+  margin-right: 3px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+    
+}
+
+#btn-video-fs {
+    float: right;
+}
+
+#btn-video-bar {
+    display:block;
+    background-color: #191919;
+    position: absolute;
+    border: none;
+    outline: 0px;
+    height: 35px;
+}
+
+#video-overlay {
+  position:absolute;
+  background-color: gray;
+  opacity: 0;
+}
+
+#btn-enable-gazer {
+    display: flex;
+    background-color: cyan;
+    outline:rgb(2, 88, 88);
+    color: #191919;
+    text-align: center;
+    font-size: 24px;
+}
+

@@ -1,0 +1,74 @@
+extends layout
+block customcss
+    link(rel='stylesheet', href='css/calibration.css')
+    link(rel='stylesheet', href='css/video.css')
+
+block content
+    div(class="header" style="padding:0.1px")
+        h1 Attention Detection #{round}
+        hr
+
+    // This is a loading pop up to let the elements load.
+    // currently not enabled since we've let elements randomly pop up one-by-one so there isn't much to load.
+    // to enable this, see the events section in calibration.js
+    div(id="dialog" style="display:none")
+        p   Loading, please wait.
+        .progress
+            div(class="progress-bar progress-bar-striped active" role="progressbar"
+            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%")
+    #overlay
+        // This button skips the calibration step. Note: no calibration data will be stored/sent to server.
+        #cal-progress
+        div(id="cal-info" style="margin-top: 50px; width:100%; text-align: center")
+            p(style="font-size: 20px; color: #cccccc") Click on all of the blue points to continue.
+        button(id="btn-cal-skip" class="btn btn-info " style="position:fixed;bottom:0px;right:0px") Skip
+
+    // main container for the recording.
+    .videoContainer
+        div(class="enableContainer" role="button")
+            button(id="btn-enable-gazer" class="btn") Record
+        if mode === "EVALUATE"
+            div(class="ratingContainer panel panel-default")
+                .panel-body
+                    h4="Report distraction when bell rings"
+                    hr
+                    div.text
+                        p
+                            img(src="other/key1.ico" width="50px")  
+                            | Distracted
+                    button(id="btn-rate-ok" class="btn btn-info") Okay
+
+            // in the text class, put whatever you want to display to the user
+            // can be plain text, or html elements.
+            div(class="textContainer panel panel-info")
+                .panel-body
+                    h4=""
+                    hr
+                    div.text
+                        ol(type="a")
+                            li Face the screen;
+                            li Don't obstruct the view of the webcam;
+                            li Don't lean back or forward heavily;
+                            li Concentrate as if it were a lecture;
+                            li Avoid moving the browser.
+                    button(id="btn-text-ok" class="btn btn-info") Okay
+    .buttonsContainer
+        button(id="btn-video-next" class="btn btn-primary") Continue
+        button(id="btn-end-gazer" class="btn btn-primary") Finish Monitoring
+    .outputContainer
+        div(id="prediction" class="panel panel-info")
+            .panel-body
+                h4="According to the data collected, you may be..."
+                hr
+                .text
+                    if prediction === '0.0'
+                        p Focused! Great job.
+                    else if prediction === '1.0'
+                        p Distracted. Refocus your attention.
+                    else
+                        p Unknown. Model is calculating your attention.
+block scripts
+    script(type="text/javascript" src="javascript/webgazer.js")
+    script(type="text/javascript" src="javascript/record.js")
+    script(type="text/javascript" src="javascript/calibration.js")
+    script(type="text/javascript" src="javascript/rating.js")

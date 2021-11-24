@@ -1,0 +1,30 @@
+extends layout
+
+block content
+    h1= "Introduction"
+    hr
+    main
+        // Main container for the personal information form.
+        div(id="info" class="jumbotron")
+            .welcome
+                h3= "Welcome to AttentiSensor!"
+                hr
+                p This project is an adaptation of a Mind-Wandering model by Yue Zhao, Christoph Lofi, and Claudia Hauff.
+                p You can find the model here, and the webapp code here.
+                p There are two modes: prototype, evaluation. 'evaluation' requires users to indicate if they are paying attention at various intervals, while 'prototype' is the normal use case.
+                p
+                    button(id="btn-intro-accept" class="btn btn-primary" onclick="window.location.href='/instructions'") Continue
+
+block scripts
+    script.
+        // data about the user's window/screen size
+        // window is the usable window size (browser without toolbar, address bar, etc).
+        // screen is the actual screen of the user.
+        var data = {
+            "window_height" : $(window).height(),
+            "window_width": $(window).width(),
+            "screen_height": screen.height,
+            "screen_width": screen.width
+        }
+
+        $.post('/environment/initial', data);

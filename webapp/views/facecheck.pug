@@ -1,0 +1,16 @@
+extends layout
+block customcss
+    link(rel='stylesheet', href='css/facecheck.css')
+
+block content
+    h1= "Webcam setup"
+    hr
+    .canvasContainer
+        #infobox
+            p Try to position yourself in such a way that the overlay fits your face perfectly. This may take a bit of time.
+            center
+                button(id="btn-fcheck-continue" class="btn btn-primary") Continue
+
+block scripts
+    script(type="text/javascript" src="javascript/searchgazer.js")
+    script(type="text/javascript" src="javascript/facecheck.js")

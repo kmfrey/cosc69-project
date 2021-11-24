@@ -1,0 +1,35 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.header {
+    margin-left: 105px;
+    padding-left: 15px;
+}
+
+.container {
+    height: auto;
+    /*width: 100%;*/
+    /*padding: 0px;*/
+}
+
+.canvasContainer {
+    height: 100%;
+    display: flex;
+    /*align-items: center;*/
+    justify-content: center;
+    z-index: 2;
+    /*padding-top: 50px;*/
+    /*padding-bottom: 50px;*/
+    /*background-color: #020202;*/
+}
+
+#infobox {
+    display:none;
+    position:absolute;
+}

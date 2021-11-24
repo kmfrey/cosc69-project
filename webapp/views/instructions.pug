@@ -1,0 +1,149 @@
+extends layout
+block customcss
+    style(type="text/css").
+        li {
+            font-size: 12pt;
+            line-height: 2.2;
+        }
+
+        .testcontainer {
+            display: flex;
+        }
+
+        .testbutton {
+            width: 200px;
+        }
+
+        .display {
+            width: 150px;
+            background-color: white;
+            margin-left: 100px;
+            border: 1px solid black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+        }
+
+block content
+    h1 Instructions
+    hr
+    main
+        .instructions
+            .jumbotron
+                ol(type="1")
+                    li During the webcam setup, please find a position that is comfortable for you.
+                    li During the calibration, please…
+                    ol(type="a")
+                        li face the screen;
+                        li keep your head relatively stable;
+                        li don't change the size and position of the web application window;
+                        li don't put your hand around your face or between your face and the webcam;
+                        li don't lean back or forward heavily;
+                    li During evaluation, #[strong report your distraction once the bell rings: press 1 on the keyboard if you have been distracted in the last 30 seconds. If you did not feel distracted in the last 30 seconds, please ignore the bell.]
+                button(id="btn-instruction-next" class="btn btn-primary") Continue
+        div(class="tutorial" style="display:none")
+            h3 How to report your distraction
+            .jumbotron
+                h6 You may ignore this if you are using the Prototype mode. If you are using the evaluation mode, please report whether you were distracted in the last 30 seconds at the sound of the bell:
+                button(id="btn-tutorial-play" class="btn btn-info testbutton") Play the sound
+                hr(style="margin-top:50px;margin-bottom:50px")
+                h6 Assume for a moment that you were indeed distracted. Please press 1 on the keyboard when the bell rings. Try it.
+                .testcontainer
+                    button(id="btn-tutorial-test" class="btn btn-info testbutton") Distraction test
+                    #pressdisplay.display 
+                hr(style="margin-top:50px;margin-bottom:50px")
+                h6 Assume for a moment that you were not distracted. Please ignore the bell when it rings. Try it.
+                .testcontainer
+                    button(id="btn-tutorial-ignore" class="btn btn-info testbutton") Non-distraction test
+                    #ignoredisplay.display
+            button(id="btn-tutorial-continue" class="btn btn-primary") Continue
+            
+block scripts
+    script(type="text/javascript" src="javascript/rating.js")
+    script.
+        var rated = false;
+        var rated2 = false;
+
+        var test1_rate = false;
+        var test2_rate = false;
+
+        init();
+
+        function display(id, color, msg) {
+            var disp = $('#' + id);
+            disp.css('background-color', color);
+            disp.empty();
+            disp.append(msg);
+        }
+
+        function clearDisplay(id) {
+            var disp = $('#' + id);
+            disp.empty();
+            disp.css('background-color', 'white');
+        }
+
+        function init() {            
+            $('#btn-instruction-next').on('click', function() {
+                $('.instructions').hide();
+                $('h1').empty().append("Reporting a distraction")
+                $('.tutorial').show();
+            });
+
+            $('#btn-tutorial-play').on('click', function() {
+                var audio = new Audio('other/alert.mp3');
+                audio.play();
+            });
+
+            $('#btn-tutorial-test').on('click', function() {
+                var audio = new Audio('other/alert.mp3');
+                audio.play();
+                $(this).prop('disabled', true);
+                test1_rate = true;
+                rated = false;
+                clearDisplay('pressdisplay');
+                setTimeout(function() {
+                    test1_rate = false;
+                    $('#btn-tutorial-test').prop('disabled', false);
+                    if (!rated) {
+                        display('pressdisplay', 'red', 'Try again.');
+                    }
+                }, 10000);
+            });
+
+            $(document).keydown(function(e) {
+                if (e.which === 49) {
+                    rated = true;
+                    rated2 = true;
+                    if (test1_rate) {
+                        display('pressdisplay', 'green', 'Successful.');
+                        $('#btn-tutorial-test').prop('disabled', false);
+                    }
+
+                    if (test2_rate) {
+                        display('ignoredisplay', 'red', 'Try again.');  
+                        $('#btn-tutorial-ignore').prop('disabled', false);
+                    }
+                }
+            });      
+
+            $('#btn-tutorial-ignore').on('click', function() {
+                $(this).prop('disabled', true);
+                var audio = new Audio('other/alert.mp3');
+                audio.play();
+                test2_rate = true;
+                rated2 = false;
+                clearDisplay('ignoredisplay');
+                setTimeout(function() {
+                    test2_rate = false;
+                    $('#btn-tutorial-ignore').prop('disabled', false);
+                    if (!rated2) {
+                        display('ignoredisplay', 'green', 'Successful');
+                    }
+                }, 10000);
+            });
+
+            $('#btn-tutorial-continue').on('click', function() {
+                window.location.href = '/facecheck';
+            });
+        }

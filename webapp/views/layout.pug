@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title= title
+    //default stylesheets
+    link(rel='stylesheet', href='css/bootstrap-paper.min.css')
+    link(rel='stylesheet', href='css/jquery-ui.css')
+    block customcss
+
+  body
+    .container
+      block content
+
+    // default scripts
+    script(type="text/javascript" src="javascript/jquery-3.2.0.min.js")
+    script(type="text/javascript" src="javascript/jquery-ui.min.js")
+    script(type="text/javascript" src="javascript/bootstrap.min.js")
+    script(type="text/javascript" src="javascript/activity.js")
+    block scripts

@@ -1,0 +1,68 @@
+/* to remove the top and left whitespace */
+* { margin:0; padding:0; }
+
+/* just to be sure these are full screen*/
+html, body {
+    width:100%; height:100%;
+}
+
+#wrapper {
+    text-align: center;
+}
+
+#wrapper iframe {
+    display: inline-block;
+}
+
+#overlay {
+    background: #020202;
+    width:100%;
+    height:100%;
+    position:absolute;
+    z-index: 1;
+    top:0;
+    left:0
+}
+
+#cal-progress {
+    display:block;
+    position:absolute;
+    background: rgba(0, 0, 0, 0);
+    color: #3498db;
+    margin: 0;
+    padding: 0;
+}
+
+.cal-button {
+    display:none;
+    position:absolute;
+    background: #3498db;
+    background-image: -webkit-linear-gradient(top, #3498db, #203267);
+    background-image: -moz-linear-gradient(top, #3498db, #203267);
+    background-image: -ms-linear-gradient(top, #3498db, #203267);
+    background-image: -o-linear-gradient(top, #3498db, #203267);
+    background-image: linear-gradient(to bottom, #3498db, #2980b9);
+    border: none;
+    -webkit-border-radius: 60px;
+    -moz-border-radius: 60px;
+    border-radius: 60px;
+    font-family: Arial;
+    color: #ffffff;
+    font-size: 18px;
+    padding: 10px 10px 10px 10px;
+    text-decoration: none;
+}
+
+.cal-button:hover {
+    background: #3cb0fd;
+    background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+    background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+    background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+    background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+    background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+    text-decoration: none;
+}
+
+.cal-button:focus {
+    outline: 0px;
+}
